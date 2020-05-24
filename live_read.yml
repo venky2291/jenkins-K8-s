@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clerk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: clerk
+  template:
+    metadata:
+      labels:
+        role: clerk
+    spec:
+      containers:
+        - name: clerk
+          image: venky2291/apache-webserver-php
+          args:
+           - bin/bash
+           - -c
+           - touch /tmp/am-awake; touch /tmp/am-free; sleep 60; rm -rf /tmp/am-free; sleep 90; rm -rf /tmp/am-awake; sleep 3600
+          livenessProbe:
+            exec:
+              command:
+              - cat
+              - /tmp/am-awake
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+              - cat
+              - /tmp/am-free
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: the-boss
+spec:
+  type: ClusterIP
+  ports:
+    - targetPort: 80
+      port: 80
+  selector:
+    role: clerk 
+
