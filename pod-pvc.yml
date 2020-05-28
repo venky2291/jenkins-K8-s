@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mywebpod-pvc
+  labels:
+    env: testing
+    region: IN
+spec:
+  containers:
+    - name: myweb-con
+      image: venky2291/apache-webserver-php:v1
+      volumeMounts:
+        - name: web-vol1
+          mountPath: /var/www/html
+  volumes:
+    - name: web-vol1
+      persistentVolumeClaim:
+        claimName: web-pvc
+

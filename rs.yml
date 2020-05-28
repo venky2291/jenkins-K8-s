@@ -19,5 +19,4 @@ spec:
     spec:
       containers:
         - name: myweb-con
-          image: httpd
-
+          image: venky2291/apache-webserver-php
